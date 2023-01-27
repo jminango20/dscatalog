@@ -1,6 +1,6 @@
 package com.jminango.dscatalog.resources;
 
-import com.jminango.dscatalog.entities.Category;
+import com.jminango.dscatalog.dto.CategoryDTO;
 import com.jminango.dscatalog.servicies.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class CategoryResource {
     @Autowired
     private CategoryService service;
     @GetMapping
-    public ResponseEntity<List<Category>> findAll(){
+    public ResponseEntity<List<CategoryDTO>> findAll(){
         return ResponseEntity.ok().body(service.findAll());
     }
 
