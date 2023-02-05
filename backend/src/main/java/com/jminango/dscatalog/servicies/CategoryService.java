@@ -3,11 +3,12 @@ package com.jminango.dscatalog.servicies;
 import com.jminango.dscatalog.dto.CategoryDTO;
 import com.jminango.dscatalog.entities.Category;
 import com.jminango.dscatalog.repositories.CategoryRepository;
-import com.jminango.dscatalog.servicies.exceptions.EntityNotFoundExceptions;
+import com.jminango.dscatalog.servicies.exceptions.ResourceNotFoundExceptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id){
         Optional<Category> obj = repository.findById(id);
-        Category entity = obj.orElseThrow(() -> new EntityNotFoundExceptions("Entity not Found"));
+        Category entity = obj.orElseThrow(() -> new ResourceNotFoundExceptions("Entity not Found"));
         return new CategoryDTO(entity);
     }
     @Transactional
@@ -34,5 +35,18 @@ public class CategoryService {
         entity.setName(dto.getName());
         entity = repository.save(entity);
         return new CategoryDTO(entity);
+    }
+
+    @Transactional
+    public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
+        try{
+            Category category = repository.getOne(id); //Pega todos uma única vez no DB ou getReferenceById
+            category.setName(dto.getName());
+            category = repository.save(category);
+            return new CategoryDTO(category);
+        }
+        catch(EntityNotFoundException e){
+            throw new ResourceNotFoundExceptions("Id not found for " + id);
+        }
     }
 }
